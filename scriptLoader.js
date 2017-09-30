@@ -7,7 +7,7 @@ const ScriptLoader = (scriptsArray, onLoad, onError) => {
         let script = document.createElement('script');
         script.src = src;
         script.addEventListener('load', () => {
-          resolve(true);
+          resolve(null);
         });
         script.addEventListener('error', (e) => {
           reject(e);
@@ -22,11 +22,13 @@ const ScriptLoader = (scriptsArray, onLoad, onError) => {
       if (onLoad) {
         onLoad(res);
       }
+      return res;
     })
     .catch(err => {
       if (onError) {
-        onError(false);
+        onError(err);
       }
+      return err;
     });
 };
 
