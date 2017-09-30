@@ -1,5 +1,6 @@
 const ScriptLoader = (scriptsArray, onLoad, onError) => {
   if (!scriptsArray || !scriptsArray.length) throw Error('Needs scripts to load!');
+  if (typeof scriptsArray === 'string') scriptsArray = [scriptsArray];
 
   const generatePromises = (scripts) => {
     return scripts.map(src => {

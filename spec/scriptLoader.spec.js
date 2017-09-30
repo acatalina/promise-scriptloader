@@ -61,8 +61,8 @@ describe('scriptLoader', () => {
     let scriptLoaderPromise = scriptLoader(['test']);
     script.load();
 
-    scriptLoaderPromise.then(res => {
-      expect(res).toBeTruthy();
+    scriptLoaderPromise.then(err => {
+      expect(err).toEqual([null]);
       done();
     });
   });
@@ -87,4 +87,25 @@ describe('scriptLoader', () => {
       done();
     });
   });
+
+  it('accepts a single string as input to load', (done) => {
+    let script = {
+      src: '',
+      addEventListener: (method, callback) => {
+        script[method] = callback;
+      }
+    }
+
+    document.createElement = () => script;
+    document.body.appendChild = () => {}
+
+    let scriptLoaderPromise = scriptLoader('test');
+    script.load();
+
+    scriptLoaderPromise.then(err => {
+      expect(err).toEqual([null]);
+      done();
+    });
+  });
+
 });
