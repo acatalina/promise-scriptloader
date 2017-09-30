@@ -8,7 +8,7 @@ describe('scriptLoader', () => {
   });
 
   it('accepts an array with one string to load as scripts and execute onLoad function when finishes', (done) => {
-    let script = {
+    const script = {
       src: '',
       addEventListener: (method, callback) => {
         script[method] = callback;
@@ -18,7 +18,7 @@ describe('scriptLoader', () => {
     document.createElement = () => script;
     document.body.appendChild = () => {}
 
-    let onLoad = (res) => {
+    const onLoad = (res) => {
       expect(res).toBeTruthy();
       done();
     }
@@ -28,7 +28,7 @@ describe('scriptLoader', () => {
   });
 
   it('accepts an array with one string to load and execute onError if fails to load', (done) => {
-    let script = {
+    const script = {
       src: '',
       addEventListener: (method, callback) => {
         script[method] = callback;
@@ -38,7 +38,7 @@ describe('scriptLoader', () => {
     document.createElement = () => script;
     document.body.appendChild = () => {}
 
-    let onError = (res) => {
+    const onError = (res) => {
       expect(res).toBeFalsy();
       done();
     }
@@ -48,7 +48,7 @@ describe('scriptLoader', () => {
   });
 
   it('returns a promise that it will receive null if no errors', (done) => {
-    let script = {
+    const script = {
       src: '',
       addEventListener: (method, callback) => {
         script[method] = callback;
@@ -58,7 +58,7 @@ describe('scriptLoader', () => {
     document.createElement = () => script;
     document.body.appendChild = () => {}
 
-    let scriptLoaderPromise = scriptLoader(['test']);
+    const scriptLoaderPromise = scriptLoader(['test']);
     script.load();
 
     scriptLoaderPromise.then(err => {
@@ -68,7 +68,7 @@ describe('scriptLoader', () => {
   });
 
   it('returns a promise that it will receive the error message if error', (done) => {
-    let script = {
+    const script = {
       src: '',
       addEventListener: (method, callback) => {
         script[method] = callback;
@@ -78,7 +78,7 @@ describe('scriptLoader', () => {
     document.createElement = () => script;
     document.body.appendChild = () => {}
 
-    let scriptLoaderPromise = scriptLoader(['test']);
+    const scriptLoaderPromise = scriptLoader(['test']);
     const errorMessage = 'Failed!';
     script.error(errorMessage);
 
@@ -89,7 +89,7 @@ describe('scriptLoader', () => {
   });
 
   it('accepts a single string as input to load', (done) => {
-    let script = {
+    const script = {
       src: '',
       addEventListener: (method, callback) => {
         script[method] = callback;
@@ -99,7 +99,7 @@ describe('scriptLoader', () => {
     document.createElement = () => script;
     document.body.appendChild = () => {}
 
-    let scriptLoaderPromise = scriptLoader('test');
+    const scriptLoaderPromise = scriptLoader('test');
     script.load();
 
     scriptLoaderPromise.then(err => {
@@ -108,4 +108,31 @@ describe('scriptLoader', () => {
     });
   });
 
+  it('accepts an array of multiple scripts to load and receives true when all scripts are loaded', (done) => {
+    class scriptMock {
+      constructor() {
+        this.src = '';
+      }
+      addEventListener(method, callback) {
+        this[method] = callback;
+      }
+    }
+    const scriptMocks = [];
+
+    document.createElement = () => {
+      const newScript = new scriptMock();
+      scriptMocks.push(newScript);
+      return newScript;
+    }
+    document.body.appendChild = () => {}
+    const scripts = ['test', 'test2'];
+    const scriptLoaderPromise = scriptLoader(scripts);
+
+    scriptMocks.forEach(scriptMock => scriptMock.load());
+
+    scriptLoaderPromise.then(err => {
+      expect(err).toEqual([null, null]);
+      done();
+    });
+  });
 });
