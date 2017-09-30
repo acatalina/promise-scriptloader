@@ -1,4 +1,4 @@
-const ScriptLoader = (scriptsArray, onLoad, onError) => {
+const scriptLoader = (scriptsArray, onLoad, onError) => {
   if (!scriptsArray || !scriptsArray.length) throw Error('Needs scripts to load!');
   if (typeof scriptsArray === 'string') scriptsArray = [scriptsArray];
 
@@ -33,4 +33,4 @@ const ScriptLoader = (scriptsArray, onLoad, onError) => {
     });
 };
 
-module.exports = ScriptLoader;
+module.exports = scriptLoader;
